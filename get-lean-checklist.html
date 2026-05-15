@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GET LEAN — 3-Week Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #080a0d;
+  --obsidian: #0d1117;
+  --surface: #111820;
+  --card: #151d26;
+  --border: #1e2d3d;
+  --blue: #00b4ff;
+  --blue-dim: #0077aa;
+  --gold: #f0a500;
+  --gold-dim: #a07000;
+  --red: #ff3333;
+  --amber: #ff9500;
+  --green: #00ff88;
+  --text: #e8f0f8;
+  --muted: #5a7a9a;
+  --dimmer: #2a3d52;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { width:100%; max-width:430px; margin:0 auto; background:var(--black); color:var(--text); font-family:'Barlow', sans-serif; overflow-x:hidden; }
+body { padding-bottom:80px; }
+
+/* CARBON TEXTURE */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 4px);
+}
+
+/* TABS */
+.tab-bar {
+  position:fixed; bottom:0; left:0; right:0; max-width:430px; margin:0 auto;
+  display:flex; background:rgba(8,10,13,0.97); border-top:1px solid var(--border);
+  z-index:1000; height:64px;
+}
+.tab-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px; cursor:pointer; border:none; background:none; color:var(--muted);
+  font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:600;
+  letter-spacing:1px; text-transform:uppercase; transition:color .2s;
+}
+.tab-btn.active { color:var(--blue); }
+.tab-btn svg { width:22px; height:22px; stroke-width:1.5; }
+
+/* PAGES */
+.page { display:none; padding:0; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(180deg, #0a1520 0%, var(--black) 100%);
+  padding:24px 20px 0;
+  text-align:center;
+}
+.plan-badge {
+  display:inline-block; background:rgba(0,180,255,0.1); border:1px solid var(--blue-dim);
+  color:var(--blue); font-family:'Barlow Condensed',sans-serif; font-size:11px;
+  font-weight:700; letter-spacing:3px; padding:4px 16px; border-radius:2px;
+  margin-bottom:12px; text-transform:uppercase;
+}
+.hero-title {
+  font-family:'Bebas Neue', sans-serif; font-size:64px; letter-spacing:4px;
+  line-height:.9; color:#fff; text-shadow:0 0 40px rgba(0,180,255,0.3);
+}
+.hero-subtitle {
+  font-family:'Barlow Condensed', sans-serif; font-size:16px; font-weight:600;
+  letter-spacing:4px; color:var(--gold); margin-top:6px; text-transform:uppercase;
+}
+.date-week {
+  margin-top:16px; display:flex; justify-content:center; gap:20px;
+}
+.date-chip, .week-chip {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:3px; padding:6px 16px;
+  font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; color:var(--muted);
+}
+.week-chip { color:var(--gold); border-color:var(--gold-dim); }
+
+/* 3D CANVAS */
+.model-canvas {
+  display:block; width:100%; height:220px;
+  cursor:grab;
+}
+.model-canvas:active { cursor:grabbing; }
+
+/* PROGRESS RING */
+.progress-wrap {
+  display:flex; flex-direction:column; align-items:center;
+  padding:24px 20px 16px; background:var(--obsidian); border-bottom:1px solid var(--border);
+}
+.ring-container { position:relative; width:140px; height:140px; }
+.ring-svg { width:140px; height:140px; transform:rotate(-90deg); }
+.ring-bg { fill:none; stroke:var(--surface); stroke-width:8; }
+.ring-fill { fill:none; stroke-width:8; stroke-linecap:round;
+  stroke-dasharray:376; stroke-dashoffset:376; transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1), stroke .5s; }
+.ring-center {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; pointer-events:none;
+}
+.ring-pct { font-family:'Bebas Neue', sans-serif; font-size:44px; line-height:1; }
+.ring-label { font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+.locked-in {
+  margin-top:8px; font-family:'Bebas Neue', sans-serif; font-size:18px;
+  letter-spacing:3px; opacity:0; transition:opacity .5s;
+  color:var(--green); text-shadow:0 0 20px rgba(0,255,136,0.5);
+}
+.locked-in.show { opacity:1; animation:pulse-glow 2s infinite; }
+@keyframes pulse-glow { 0%,100%{text-shadow:0 0 20px rgba(0,255,136,0.5)} 50%{text-shadow:0 0 40px rgba(0,255,136,0.9)} }
+
+/* FLASH overlay */
+.flash-overlay {
+  position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:rgba(0,180,255,0.15); opacity:0; transition:opacity .1s;
+}
+.flash-overlay.flash { opacity:1; }
+
+/* SECTION */
+.section { margin:0 0 0; }
+.section-hdr {
+  display:flex; align-items:center; gap:10px;
+  padding:18px 20px 10px;
+  background:var(--obsidian);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:10;
+}
+.section-icon { font-size:18px; }
+.section-title {
+  font-family:'Bebas Neue', sans-serif; font-size:22px; letter-spacing:3px;
+  color:#fff;
+}
+.section-badge {
+  margin-left:auto; background:rgba(0,180,255,0.1); border:1px solid var(--blue-dim);
+  color:var(--blue); font-family:'Barlow Condensed', sans-serif; font-size:10px;
+  font-weight:700; letter-spacing:2px; padding:3px 10px; border-radius:2px;
+  text-transform:uppercase;
+}
+.section-badge.gold { background:rgba(240,165,0,0.1); border-color:var(--gold-dim); color:var(--gold); }
+.section-badge.red { background:rgba(255,51,51,0.1); border-color:#aa0000; color:var(--red); }
+.section-body { padding:8px 20px 16px; background:var(--obsidian); }
+
+/* FAST DAY */
+.fast-day-overlay {
+  background:rgba(255,51,51,0.08); border:1px solid rgba(255,51,51,0.25);
+  border-radius:4px; padding:16px; text-align:center;
+  font-family:'Bebas Neue', sans-serif; font-size:20px; letter-spacing:4px; color:var(--red);
+  margin:8px 0;
+}
+
+/* CHECKBOX ITEM */
+.check-item {
+  display:flex; align-items:center; gap:14px; padding:13px 0;
+  border-bottom:1px solid rgba(30,45,61,0.5); cursor:pointer;
+  transition:background .15s;
+}
+.check-item:last-child { border-bottom:none; }
+.check-item.locked { opacity:0.35; pointer-events:none; }
+.check-box {
+  width:26px; height:26px; border-radius:3px; border:2px solid var(--dimmer);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.check-box svg { width:14px; height:14px; stroke:#fff; stroke-width:3; opacity:0; transform:scale(0); transition:all .25s cubic-bezier(.4,0,.2,1); }
+.check-item.done .check-box { background:var(--blue); border-color:var(--blue); box-shadow:0 0 12px rgba(0,180,255,0.4); }
+.check-item.done .check-box svg { opacity:1; transform:scale(1); }
+.check-label { font-family:'Barlow', sans-serif; font-size:15px; font-weight:500; color:var(--text); flex:1; }
+.check-item.done .check-label { color:var(--muted); text-decoration:line-through; }
+
+/* KM INPUT */
+.km-wrap { display:flex; align-items:center; gap:8px; }
+.km-input {
+  width:64px; background:var(--surface); border:1px solid var(--border);
+  border-radius:3px; color:var(--text); font-family:'Barlow Condensed', sans-serif;
+  font-size:14px; font-weight:600; padding:4px 8px; text-align:center;
+}
+.km-label { font-size:12px; color:var(--muted); font-family:'Barlow Condensed', sans-serif; letter-spacing:1px; }
+
+/* PUSH-UP COUNTER */
+.pushup-wrap { display:flex; align-items:center; gap:10px; }
+.pushup-btn {
+  background:var(--surface); border:1px solid var(--border); border-radius:3px;
+  color:var(--blue); font-size:18px; font-weight:700; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-family:'Barlow Condensed', sans-serif;
+  transition:background .15s, transform .1s;
+}
+.pushup-btn:active { transform:scale(0.92); background:var(--surface); }
+.pushup-count {
+  font-family:'Bebas Neue', sans-serif; font-size:28px; color:#fff; min-width:50px; text-align:center;
+}
+.pushup-target { font-size:11px; color:var(--muted); font-family:'Barlow Condensed', sans-serif; letter-spacing:1px; }
+
+/* TIMER */
+.timer-wrap { display:flex; align-items:center; gap:10px; }
+.timer-display {
+  font-family:'Barlow Condensed', sans-serif; font-size:18px; font-weight:700;
+  color:var(--gold); min-width:70px;
+}
+.timer-btn {
+  background:rgba(240,165,0,0.1); border:1px solid var(--gold-dim);
+  border-radius:3px; color:var(--gold); font-size:12px; font-weight:700;
+  font-family:'Barlow Condensed', sans-serif; letter-spacing:1px;
+  padding:4px 12px; cursor:pointer; transition:background .15s;
+}
+.timer-btn:active { background:rgba(240,165,0,0.25); }
+.timer-btn.running { color:var(--red); border-color:#aa0000; background:rgba(255,51,51,0.1); }
+
+/* WATER TRACKER */
+.water-grid { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.water-drop {
+  width:36px; height:44px; cursor:pointer; transition:transform .2s;
+}
+.water-drop:active { transform:scale(0.88); }
+.water-drop svg { width:100%; height:100%; }
+.water-drop .drop-shape { transition:fill .3s, filter .3s; fill:var(--dimmer); }
+.water-drop.filled .drop-shape { fill:var(--blue); filter:drop-shadow(0 0 6px rgba(0,180,255,0.5)); }
+.water-label { font-family:'Barlow Condensed', sans-serif; font-size:12px; color:var(--muted); letter-spacing:1px; margin-top:6px; }
+
+/* STREAK CALENDAR */
+.streak-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; padding:0 20px 20px; }
+.streak-day {
+  aspect-ratio:1; border-radius:3px; border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:var(--surface); font-family:'Barlow Condensed', sans-serif;
+  font-size:10px; font-weight:700; color:var(--muted);
+}
+.streak-day.complete { background:rgba(0,255,136,0.15); border-color:#006644; color:var(--green); }
+.streak-day.today-sq { border-color:var(--blue); color:var(--blue); }
+.streak-day.incomplete { background:rgba(255,51,51,0.05); border-color:#441100; color:var(--red); }
+.streak-day-num { font-size:13px; }
+.streak-header { font-family:'Bebas Neue', sans-serif; font-size:20px; letter-spacing:3px;
+  padding:20px 20px 12px; color:#fff; border-bottom:1px solid var(--border); margin-bottom:12px; }
+
+/* GLITCH */
+@keyframes glitch-anim {
+  0%,100% { clip-path:inset(0 0 100% 0); transform:translate(0) }
+  10% { clip-path:inset(10% 0 80% 0); transform:translate(-2px) }
+  20% { clip-path:inset(40% 0 50% 0); transform:translate(2px) }
+  30% { clip-path:inset(70% 0 20% 0); transform:translate(-1px) }
+  40% { clip-path:inset(20% 0 70% 0); transform:translate(1px) }
+  50% { clip-path:inset(0 0 0 0); transform:translate(0) }
+}
+.glitch-wrap { position:relative; display:inline-block; }
+.glitch-wrap::before, .glitch-wrap::after {
+  content:attr(data-text); position:absolute; left:0; top:0;
+  font-family:'Bebas Neue', sans-serif; font-size:inherit; letter-spacing:inherit; color:inherit;
+}
+.glitch-wrap::before { color:var(--blue); animation:glitch-anim 3s step-start infinite; }
+.glitch-wrap::after { color:var(--red); animation:glitch-anim 3s step-start .15s infinite; opacity:.7; }
+
+/* PROGRESS PAGE */
+.prog-wrap { padding:20px; }
+.prog-title { font-family:'Bebas Neue', sans-serif; font-size:22px; letter-spacing:3px; margin-bottom:16px; color:#fff; }
+.prog-stat { background:var(--card); border:1px solid var(--border); border-radius:4px;
+  padding:16px; margin-bottom:12px; }
+.prog-stat-label { font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+.prog-stat-val { font-family:'Bebas Neue', sans-serif; font-size:36px; color:var(--blue); }
+.prog-bar-wrap { background:var(--surface); border-radius:2px; height:6px; margin-top:8px; overflow:hidden; }
+.prog-bar { height:100%; background:linear-gradient(90deg, var(--blue), var(--green)); border-radius:2px; transition:width .8s; }
+.mid-model-wrap { background:var(--obsidian); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.mid-model-label {
+  font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:700;
+  letter-spacing:3px; text-align:center; color:var(--muted); padding:12px 0 0;
+  text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-today" onclick="switchTab('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="15" y1="3" x2="15" y2="9"/></svg>
+    TODAY
+  </button>
+  <button class="tab-btn" id="tab-streak" onclick="switchTab('streak')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    STREAK
+  </button>
+  <button class="tab-btn" id="tab-progress" onclick="switchTab('progress')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/></svg>
+    PROGRESS
+  </button>
+</div>
+
+<!-- TODAY PAGE -->
+<div class="page active" id="page-today">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="plan-badge">MAY 16 – JUNE 7 • 2025</div>
+    <div class="hero-title"><span class="glitch-wrap" data-text="GET LEAN">GET LEAN</span></div>
+    <div class="hero-subtitle">3-Week Transformation Plan</div>
+    <div class="date-week">
+      <div class="date-chip" id="todayDate">—</div>
+      <div class="week-chip" id="weekChip">WEEK 1</div>
+    </div>
+    <canvas class="model-canvas" id="canvas1"></canvas>
+  </div>
+
+  <!-- PROGRESS RING -->
+  <div class="progress-wrap">
+    <div class="ring-container">
+      <svg class="ring-svg" viewBox="0 0 140 140">
+        <circle class="ring-bg" cx="70" cy="70" r="60"/>
+        <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="60"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-label">COMPLETE</div>
+      </div>
+    </div>
+    <div class="locked-in" id="lockedIn">LOCKED IN 🔥</div>
+  </div>
+
+  <!-- SECTION 1: DIET -->
+  <div class="section">
+    <div class="section-hdr">
+      <span class="section-icon">🍽</span>
+      <span class="section-title"><span class="glitch-wrap" data-text="DIET">DIET</span></span>
+      <span class="section-badge" id="fastBadge">INTERMITTENT FAST</span>
+    </div>
+    <div class="section-body" id="dietBody">
+      <div id="fastDayMsg" style="display:none" class="fast-day-overlay">⛔ FULL FAST DAY — ALL FOOD LOCKED</div>
+      <div id="dietChecks">
+        <div class="check-item" id="ci-debloat" onclick="toggle('debloat')">
+          <div class="check-box" id="cb-debloat"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">De-bloat Drink</div>
+        </div>
+        <div class="check-item" id="ci-sand1" onclick="toggle('sand1')">
+          <div class="check-box" id="cb-sand1"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">Sandwich #1</div>
+        </div>
+        <div class="check-item" id="ci-sand2" onclick="toggle('sand2')">
+          <div class="check-box" id="cb-sand2"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">Sandwich #2</div>
+        </div>
+        <div class="check-item" id="ci-egg1" onclick="toggle('egg1')">
+          <div class="check-box" id="cb-egg1"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">Egg Roll #1</div>
+        </div>
+        <div class="check-item" id="ci-egg2" onclick="toggle('egg2')">
+          <div class="check-box" id="cb-egg2"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">Egg Roll #2</div>
+        </div>
+        <div class="check-item" id="ci-coffee" onclick="toggle('coffee')">
+          <div class="check-box" id="cb-coffee"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+          <div class="check-label">Black Coffee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: MORNING WORKOUT -->
+  <div class="section">
+    <div class="section-hdr">
+      <span class="section-icon">☀️</span>
+      <span class="section-title"><span class="glitch-wrap" data-text="MORNING">MORNING</span></span>
+      <span class="section-badge gold">WORKOUT</span>
+    </div>
+    <div class="section-body">
+      <div class="check-item" id="ci-plyos" onclick="toggle('plyos')">
+        <div class="check-box" id="cb-plyos"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label">Basic Plyometrics</div>
+      </div>
+      <div class="check-item" id="ci-run" onclick="toggle('run')">
+        <div class="check-box" id="cb-run"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">5–10 km Run</div>
+        <div class="km-wrap" onclick="e=>e.stopPropagation()">
+          <input class="km-input" type="number" id="kmInput" min="0" max="20" step="0.1" placeholder="0.0" onclick="event.stopPropagation()" oninput="saveKm()">
+          <span class="km-label">KM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: EVENING WORKOUT -->
+  <div class="section">
+    <div class="section-hdr">
+      <span class="section-icon">🌙</span>
+      <span class="section-title"><span class="glitch-wrap" data-text="EVENING">EVENING</span></span>
+      <span class="section-badge gold">WORKOUT</span>
+    </div>
+    <div class="section-body">
+      <div class="check-item" id="ci-pushups" onclick="toggle('pushups')">
+        <div class="check-box" id="cb-pushups"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">200 Push-ups</div>
+        <div class="pushup-wrap" onclick="event.stopPropagation()">
+          <div class="pushup-btn" onclick="adjustPushups(-10)">−</div>
+          <div>
+            <div class="pushup-count" id="pushupCount">0</div>
+            <div class="pushup-target">/ 200</div>
+          </div>
+          <div class="pushup-btn" onclick="adjustPushups(10)">+</div>
+        </div>
+      </div>
+      <div class="check-item" id="ci-sparring" onclick="toggle('sparring')">
+        <div class="check-box" id="cb-sparring"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label">Air Sparring</div>
+      </div>
+      <div class="check-item" id="ci-stretch" onclick="toggle('stretch')">
+        <div class="check-box" id="cb-stretch"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label">Stretching</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MID 3D MODEL -->
+  <div class="mid-model-wrap">
+    <div class="mid-model-label">ATHLETIC STANCE</div>
+    <canvas class="model-canvas" id="canvas2"></canvas>
+  </div>
+
+  <!-- SECTION 4: MENTAL -->
+  <div class="section">
+    <div class="section-hdr">
+      <span class="section-icon">🧠</span>
+      <span class="section-title"><span class="glitch-wrap" data-text="MENTAL">MENTAL</span></span>
+      <span class="section-badge">EDUCATION</span>
+    </div>
+    <div class="section-body">
+      <div class="check-item" id="ci-chess" onclick="toggle('chess')">
+        <div class="check-box" id="cb-chess"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">Chess</div>
+        <div class="timer-wrap" onclick="event.stopPropagation()">
+          <div class="timer-display" id="td-chess">30:00</div>
+          <div class="timer-btn" id="tb-chess" onclick="toggleTimer('chess',1800)">START</div>
+        </div>
+      </div>
+      <div class="check-item" id="ci-sudoku" onclick="toggle('sudoku')">
+        <div class="check-box" id="cb-sudoku"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">Sudoku</div>
+        <div class="timer-wrap" onclick="event.stopPropagation()">
+          <div class="timer-display" id="td-sudoku">30:00</div>
+          <div class="timer-btn" id="tb-sudoku" onclick="toggleTimer('sudoku',1800)">START</div>
+        </div>
+      </div>
+      <div class="check-item" id="ci-study" onclick="toggle('study')">
+        <div class="check-box" id="cb-study"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">College Study</div>
+        <div class="timer-wrap" onclick="event.stopPropagation()">
+          <div class="timer-display" id="td-study">2:00:00</div>
+          <div class="timer-btn" id="tb-study" onclick="toggleTimer('study',7200)">START</div>
+        </div>
+      </div>
+      <div class="check-item" id="ci-trading" onclick="toggle('trading')">
+        <div class="check-box" id="cb-trading"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label" style="flex:1">Trading Lessons</div>
+        <div class="timer-wrap" onclick="event.stopPropagation()">
+          <div class="timer-display" id="td-trading">3:00:00</div>
+          <div class="timer-btn" id="tb-trading" onclick="toggleTimer('trading',10800)">START</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: HEALTH -->
+  <div class="section">
+    <div class="section-hdr">
+      <span class="section-icon">💧</span>
+      <span class="section-title"><span class="glitch-wrap" data-text="HEALTH">HEALTH</span></span>
+      <span class="section-badge">WELLNESS</span>
+    </div>
+    <div class="section-body">
+      <div class="check-item" id="ci-sun" onclick="toggle('sun')">
+        <div class="check-box" id="cb-sun"><svg viewBox="0 0 14 14"><polyline points="2,7 6,11 12,3"/></svg></div>
+        <div class="check-label">30 min Midday Sunlight (shorts only)</div>
+      </div>
+      <div style="padding:12px 0 8px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;color:var(--text)">WATER INTAKE</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted)" id="waterLabel">0 / 4L</div>
+        </div>
+        <div class="water-grid" id="waterGrid">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER 3D MODEL -->
+  <div class="mid-model-wrap">
+    <div class="mid-model-label">RUNNING POSE</div>
+    <canvas class="model-canvas" id="canvas3"></canvas>
+  </div>
+
+</div>
+
+<!-- STREAK PAGE -->
+<div class="page" id="page-streak">
+  <div class="streak-header"><span class="glitch-wrap" data-text="21-DAY STREAK">21-DAY STREAK</span></div>
+  <div class="streak-grid" id="streakGrid"></div>
+</div>
+
+<!-- PROGRESS PAGE -->
+<div class="page" id="page-progress">
+  <div class="prog-wrap">
+    <div class="prog-title">MISSION STATS</div>
+    <div class="prog-stat">
+      <div class="prog-stat-label">Days Completed</div>
+      <div class="prog-stat-val" id="statDaysComplete">0 / 21</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" id="barDays" style="width:0%"></div></div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-label">Today's Progress</div>
+      <div class="prog-stat-val" id="statTodayPct" style="color:var(--red)">0%</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" id="barToday" style="width:0%"></div></div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-label">Total KM Logged</div>
+      <div class="prog-stat-val" id="statKm" style="color:var(--gold)">0 km</div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-label">Current Week</div>
+      <div class="prog-stat-val" id="statWeek" style="color:var(--green)">WEEK 1</div>
+    </div>
+    <div class="prog-stat">
+      <div class="prog-stat-label">Hydration Today</div>
+      <div class="prog-stat-val" id="statWater" style="color:var(--blue)">0L / 4L</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── STATE ──
+const START_DATE = new Date('2025-05-16');
+const END_DATE   = new Date('2025-06-07');
+
+function todayKey() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+function getState() {
+  const k = todayKey();
+  const raw = localStorage.getItem('glean_' + k);
+  if (raw) return JSON.parse(raw);
+  return { checks:{}, km:0, pushups:0, water:0, timers:{} };
+}
+
+function saveState(s) {
+  localStorage.setItem('glean_' + todayKey(), JSON.stringify(s));
+}
+
+let state = getState();
+let pushupVal = state.pushups || 0;
+let waterVal  = state.water  || 0;
+
+// Timers state
+const timerState = {};
+['chess','sudoku','study','trading'].forEach(id => {
+  timerState[id] = { remaining: state.timers?.[id] !== undefined ? state.timers[id] : getDefaultTime(id), running:false, interval:null };
+});
+
+function getDefaultTime(id) {
+  return { chess:1800, sudoku:1800, study:7200, trading:10800 }[id];
+}
+
+// ── DATE / WEEK ──
+function getWeekNum() {
+  const today = new Date();
+  const diff = Math.floor((today - START_DATE) / 86400000);
+  if (diff < 0) return 1;
+  if (diff < 7) return 1;
+  if (diff < 14) return 2;
+  return 3;
+}
+
+function isSunday() {
+  return new Date().getDay() === 0;
+}
+
+function initDateUI() {
+  const d = new Date();
+  const opts = { weekday:'short', month:'short', day:'numeric' };
+  document.getElementById('todayDate').textContent = d.toLocaleDateString('en-US', opts).toUpperCase();
+  const wn = getWeekNum();
+  document.getElementById('weekChip').textContent = 'WEEK ' + wn;
+  document.getElementById('statWeek').textContent = 'WEEK ' + wn;
+
+  // Fast badge + Sunday logic
+  if (isSunday()) {
+    document.getElementById('fastBadge').textContent = 'FULL-DAY FAST 🔒';
+    document.getElementById('fastBadge').classList.add('red');
+    document.getElementById('fastDayMsg').style.display = 'block';
+    document.querySelectorAll('#dietChecks .check-item').forEach(el => el.classList.add('locked'));
+  } else {
+    document.getElementById('fastBadge').textContent = 'INTERMITTENT FAST';
+  }
+}
+
+// ── CHECKBOXES ──
+const CHECKABLE_KEYS = ['debloat','sand1','sand2','egg1','egg2','coffee','plyos','run','pushups','sparring','stretch','chess','sudoku','study','trading','sun'];
+const TOTAL_TASKS = CHECKABLE_KEYS.length + 1; // +1 water
+
+function toggle(key) {
+  if (isSunday() && ['debloat','sand1','sand2','egg1','egg2','coffee'].includes(key)) return;
+  state.checks[key] = !state.checks[key];
+  saveState(state);
+  renderChecks();
+  doFlash();
+  updateProgress();
+}
+
+function renderChecks() {
+  CHECKABLE_KEYS.forEach(key => {
+    const ci = document.getElementById('ci-' + key);
+    const cb = document.getElementById('cb-' + key);
+    if (!ci) return;
+    if (state.checks[key]) {
+      ci.classList.add('done');
+    } else {
+      ci.classList.remove('done');
+    }
+  });
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  let done = 0;
+  CHECKABLE_KEYS.forEach(k => { if (state.checks[k]) done++; });
+  if (waterVal >= 8) done++;
+  const total = TOTAL_TASKS;
+  const pct = Math.round((done / total) * 100);
+
+  document.getElementById('ringPct').textContent = pct + '%';
+  const circumference = 376;
+  const offset = circumference - (circumference * pct / 100);
+  const fill = document.getElementById('ringFill');
+  fill.style.strokeDashoffset = offset;
+
+  let color;
+  if (pct <= 40) { color = '#ff3333'; }
+  else if (pct <= 80) { color = '#ff9500'; }
+  else { color = '#00ff88'; }
+  fill.style.stroke = color;
+  document.getElementById('ringPct').style.color = color;
+
+  const li = document.getElementById('lockedIn');
+  if (pct >= 81) li.classList.add('show');
+  else li.classList.remove('show');
+
+  // progress page
+  document.getElementById('statTodayPct').textContent = pct + '%';
+  document.getElementById('statTodayPct').style.color = color;
+  document.getElementById('barToday').style.width = pct + '%';
+
+  // streak
+  updateStreakDays();
+  // save today progress
+  const allDayData = JSON.parse(localStorage.getItem('glean_alldays') || '{}');
+  allDayData[todayKey()] = pct;
+  localStorage.setItem('glean_alldays', JSON.stringify(allDayData));
+  renderStreakGrid();
+  renderProgressStats();
+}
+
+// ── PUSHUPS ──
+function adjustPushups(delta) {
+  pushupVal = Math.max(0, Math.min(200, pushupVal + delta));
+  state.pushups = pushupVal;
+  saveState(state);
+  document.getElementById('pushupCount').textContent = pushupVal;
+  if (pushupVal >= 200) {
+    state.checks['pushups'] = true;
+    renderChecks();
+    updateProgress();
+  }
+  doFlash();
+}
+
+// ── KM ──
+function saveKm() {
+  const v = parseFloat(document.getElementById('kmInput').value) || 0;
+  state.km = v;
+  saveState(state);
+  // update total km
+  let total = 0;
+  for (let i = 0; i < 21; i++) {
+    const dd = new Date(START_DATE);
+    dd.setDate(dd.getDate() + i);
+    const k = dd.toISOString().slice(0,10);
+    const s = localStorage.getItem('glean_' + k);
+    if (s) total += (JSON.parse(s).km || 0);
+  }
+  document.getElementById('statKm').textContent = total.toFixed(1) + ' km';
+}
+
+// ── WATER ──
+function buildWaterGrid() {
+  const g = document.getElementById('waterGrid');
+  g.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const d = document.createElement('div');
+    d.className = 'water-drop' + (i < waterVal ? ' filled' : '');
+    d.onclick = () => tapWater(i);
+    d.innerHTML = `<svg viewBox="0 0 36 44" xmlns="http://www.w3.org/2000/svg">
+      <path class="drop-shape" d="M18 2 C18 2 4 18 4 28 C4 36.8 10.3 43 18 43 C25.7 43 32 36.8 32 28 C32 18 18 2 18 2Z"/>
+    </svg>`;
+    g.appendChild(d);
+  }
+  updateWaterLabel();
+}
+
+function tapWater(i) {
+  if (i < waterVal) {
+    waterVal = i;
+  } else {
+    waterVal = i + 1;
+  }
+  state.water = waterVal;
+  saveState(state);
+  buildWaterGrid();
+  updateProgress();
+  doFlash();
+}
+
+function updateWaterLabel() {
+  document.getElementById('waterLabel').textContent = (waterVal * 0.5).toFixed(1) + ' / 4L';
+  document.getElementById('statWater').textContent = (waterVal * 0.5).toFixed(1) + 'L / 4L';
+}
+
+// ── TIMERS ──
+function toggleTimer(id, defaultSecs) {
+  const ts = timerState[id];
+  const btn = document.getElementById('tb-' + id);
+  if (ts.running) {
+    clearInterval(ts.interval);
+    ts.running = false;
+    btn.textContent = 'RESUME';
+    btn.classList.remove('running');
+  } else {
+    if (ts.remaining <= 0) ts.remaining = defaultSecs;
+    ts.running = true;
+    btn.textContent = 'PAUSE';
+    btn.classList.add('running');
+    ts.interval = setInterval(() => {
+      ts.remaining--;
+      state.timers[id] = ts.remaining;
+      saveState(state);
+      renderTimer(id);
+      if (ts.remaining <= 0) {
+        clearInterval(ts.interval);
+        ts.running = false;
+        btn.textContent = 'DONE';
+        btn.classList.remove('running');
+        state.checks[id] = true;
+        saveState(state);
+        renderChecks();
+        updateProgress();
+      }
+    }, 1000);
+  }
+}
+
+function renderTimer(id) {
+  const rem = timerState[id].remaining;
+  const h = Math.floor(rem / 3600);
+  const m = Math.floor((rem % 3600) / 60);
+  const s = rem % 60;
+  const pad = n => String(n).padStart(2,'0');
+  const el = document.getElementById('td-' + id);
+  if (h > 0) el.textContent = h + ':' + pad(m) + ':' + pad(s);
+  else el.textContent = pad(m) + ':' + pad(s);
+}
+
+// ── FLASH ──
+function doFlash() {
+  const o = document.getElementById('flashOverlay');
+  o.classList.add('flash');
+  setTimeout(() => o.classList.remove('flash'), 120);
+}
+
+// ── STREAK ──
+function updateStreakDays() {}
+
+function renderStreakGrid() {
+  const g = document.getElementById('streakGrid');
+  g.innerHTML = '';
+  const allDayData = JSON.parse(localStorage.getItem('glean_alldays') || '{}');
+  const today = todayKey();
+
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(START_DATE);
+    d.setDate(d.getDate() + i);
+    const k = d.toISOString().slice(0,10);
+    const dayNum = i + 1;
+    const pct = allDayData[k];
+
+    const div = document.createElement('div');
+    div.className = 'streak-day';
+    div.innerHTML = `<div class="streak-day-num">${dayNum}</div>`;
+
+    if (k === today) {
+      div.classList.add('today-sq');
+    } else if (k < today) {
+      if (pct !== undefined && pct >= 80) div.classList.add('complete');
+      else if (pct !== undefined) div.classList.add('incomplete');
+    }
+    g.appendChild(div);
+  }
+}
+
+function renderProgressStats() {
+  const allDayData = JSON.parse(localStorage.getItem('glean_alldays') || '{}');
+  let completed = 0;
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(START_DATE);
+    d.setDate(d.getDate() + i);
+    const k = d.toISOString().slice(0,10);
+    if ((allDayData[k] || 0) >= 80) completed++;
+  }
+  document.getElementById('statDaysComplete').textContent = completed + ' / 21';
+  document.getElementById('barDays').style.width = Math.round((completed/21)*100) + '%';
+
+  let totalKm = 0;
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(START_DATE);
+    d.setDate(d.getDate() + i);
+    const k = d.toISOString().slice(0,10);
+    const s = localStorage.getItem('glean_' + k);
+    if (s) totalKm += (JSON.parse(s).km || 0);
+  }
+  document.getElementById('statKm').textContent = totalKm.toFixed(1) + ' km';
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  ['today','streak','progress'].forEach(t => {
+    document.getElementById('page-' + t).classList.remove('active');
+    document.getElementById('tab-' + t).classList.remove('active');
+  });
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'streak') renderStreakGrid();
+  if (tab === 'progress') renderProgressStats();
+}
+
+// ── INIT ──
+initDateUI();
+renderChecks();
+buildWaterGrid();
+document.getElementById('pushupCount').textContent = pushupVal;
+if (state.km) document.getElementById('kmInput').value = state.km;
+['chess','sudoku','study','trading'].forEach(id => renderTimer(id));
+updateProgress();
+renderStreakGrid();
+renderProgressStats();
+
+// ════════════════════════════════════════
+// THREE.JS 3D MODELS
+// ════════════════════════════════════════
+
+function createScene(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  renderer.shadowMap.enabled = true;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
+  camera.position.set(0, 1.2, 4.5);
+  camera.lookAt(0, 0.8, 0);
+
+  // Lighting
+  const ambient = new THREE.AmbientLight(0x1a2a3a, 0.8);
+  scene.add(ambient);
+  const dirLight = new THREE.DirectionalLight(0x00b4ff, 2.0);
+  dirLight.position.set(2, 4, 2);
+  scene.add(dirLight);
+  const rimLight = new THREE.DirectionalLight(0xf0a500, 1.0);
+  rimLight.position.set(-3, 2, -2);
+  scene.add(rimLight);
+  const fillLight = new THREE.PointLight(0x00ff88, 0.5, 8);
+  fillLight.position.set(0, 3, 1);
+  scene.add(fillLight);
+
+  // Material
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x1a2d40,
+    metalness: 0.85,
+    roughness: 0.2,
+    emissive: 0x002244,
+    emissiveIntensity: 0.3
+  });
+  const accentMat = new THREE.MeshStandardMaterial({
+    color: 0x003355,
+    metalness: 0.9,
+    roughness: 0.15,
+    emissive: 0x001133,
+    emissiveIntensity: 0.4
+  });
+
+  return { scene, camera, renderer, mat, accentMat, canvas };
+}
+
+function buildFigure(scene, mat, accentMat, pose) {
+  const group = new THREE.Group();
+
+  const make = (geo, m, px, py, pz, rx, ry, rz) => {
+    const mesh = new THREE.Mesh(geo, m || mat);
+    mesh.position.set(px||0, py||0, pz||0);
+    mesh.rotation.set(rx||0, ry||0, rz||0);
+    return mesh;
+  };
+
+  // TORSO
+  const torso = make(new THREE.CylinderGeometry(0.28, 0.22, 0.7, 8), mat, 0, 0, 0);
+  group.add(torso);
+
+  // CHEST (pecs)
+  const chest = make(new THREE.BoxGeometry(0.52, 0.28, 0.2), accentMat, 0, 0.12, 0.1);
+  group.add(chest);
+
+  // ABS
+  const abs = make(new THREE.BoxGeometry(0.32, 0.22, 0.14), accentMat, 0, -0.12, 0.1);
+  group.add(abs);
+
+  // SHOULDERS
+  const lShoulder = make(new THREE.SphereGeometry(0.12, 8, 8), mat, -0.38, 0.28, 0);
+  const rShoulder = make(new THREE.SphereGeometry(0.12, 8, 8), mat, 0.38, 0.28, 0);
+  group.add(lShoulder, rShoulder);
+
+  // HEAD
+  const head = make(new THREE.SphereGeometry(0.18, 10, 10), mat, 0, 0.62, 0);
+  group.add(head);
+  // Neck
+  const neck = make(new THREE.CylinderGeometry(0.07, 0.09, 0.18, 8), mat, 0, 0.44, 0);
+  group.add(neck);
+
+  // HIPS
+  const hips = make(new THREE.CylinderGeometry(0.22, 0.2, 0.28, 8), mat, 0, -0.49, 0);
+  group.add(hips);
+
+  if (pose === 'rest') {
+    // ARMS DOWN
+    const makeArm = (side) => {
+      const sg = side === -1 ? 'l' : 'r';
+      const upper = make(new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8), mat, side*0.46, 0.08, 0.05, 0, 0, side*0.15);
+      const lower = make(new THREE.CylinderGeometry(0.065, 0.055, 0.38, 8), mat, side*0.52, -0.26, 0.04, 0, 0, side*0.18);
+      const hand = make(new THREE.SphereGeometry(0.065, 8, 6), mat, side*0.57, -0.48, 0.03);
+      group.add(upper, lower, hand);
+    };
+    makeArm(-1); makeArm(1);
+
+    // LEGS
+    const makeLeg = (side) => {
+      const upper = make(new THREE.CylinderGeometry(0.1, 0.085, 0.5, 8), mat, side*0.11, -0.88, 0, 0, 0, side*0.05);
+      const lower = make(new THREE.CylinderGeometry(0.08, 0.06, 0.46, 8), mat, side*0.12, -1.28, 0.02, 0.05, 0, side*0.04);
+      const foot = make(new THREE.BoxGeometry(0.12, 0.08, 0.22), mat, side*0.12, -1.58, 0.08);
+      group.add(upper, lower, foot);
+    };
+    makeLeg(-1); makeLeg(1);
+
+    group.position.set(0, 0.1, 0);
+
+  } else if (pose === 'athletic') {
+    // ARMS slightly raised - athletic crouch
+    const lUpper = make(new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8), mat, -0.5, 0.12, 0.05, 0, 0, -0.7);
+    const lLower = make(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 8), mat, -0.66, -0.1, 0.1, 0.3, 0, -0.5);
+    const rUpper = make(new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8), mat, 0.5, 0.12, 0.05, 0, 0, 0.7);
+    const rLower = make(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 8), mat, 0.66, -0.1, 0.1, -0.3, 0, 0.5);
+    const lHand = make(new THREE.SphereGeometry(0.065, 8, 6), mat, -0.76, -0.26, 0.15);
+    const rHand = make(new THREE.SphereGeometry(0.065, 8, 6), mat, 0.76, -0.26, 0.15);
+    group.add(lUpper, lLower, rUpper, rLower, lHand, rHand);
+
+    // Crouched legs
+    const lThigh = make(new THREE.CylinderGeometry(0.1, 0.085, 0.42, 8), mat, -0.13, -0.76, 0, 0.5, 0, -0.1);
+    const rThigh = make(new THREE.CylinderGeometry(0.1, 0.085, 0.42, 8), mat, 0.13, -0.76, 0, 0.5, 0, 0.1);
+    const lShin  = make(new THREE.CylinderGeometry(0.08, 0.06, 0.38, 8), mat, -0.18, -1.14, 0.18, -0.6, 0, -0.08);
+    const rShin  = make(new THREE.CylinderGeometry(0.08, 0.06, 0.38, 8), mat, 0.18, -1.14, 0.18, -0.6, 0, 0.08);
+    const lFoot  = make(new THREE.BoxGeometry(0.12, 0.07, 0.2), mat, -0.2, -1.36, 0.3);
+    const rFoot  = make(new THREE.BoxGeometry(0.12, 0.07, 0.2), mat, 0.2, -1.36, 0.3);
+    group.add(lThigh, rThigh, lShin, rShin, lFoot, rFoot);
+
+    // Tilt torso forward slightly
+    group.rotation.x = 0.2;
+    group.position.set(0, 0.35, 0);
+
+  } else if (pose === 'run') {
+    // RUNNING pose - asymmetric
+    const lUpper = make(new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8), mat, -0.45, 0.2, 0, -0.8, 0, -0.6);
+    const lLower = make(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 8), mat, -0.55, -0.08, 0.15, -1.2, 0, -0.4);
+    const rUpper = make(new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8), mat, 0.45, 0.1, 0.05, 0.6, 0, 0.7);
+    const rLower = make(new THREE.CylinderGeometry(0.065, 0.055, 0.36, 8), mat, 0.6, -0.1, -0.1, 0.3, 0, 0.5);
+    const lHand  = make(new THREE.SphereGeometry(0.065, 8, 6), mat, -0.6, -0.22, 0.28);
+    const rHand  = make(new THREE.SphereGeometry(0.065, 8, 6), mat, 0.72, -0.24, -0.16);
+    group.add(lUpper, lLower, rUpper, rLower, lHand, rHand);
+
+    // Running legs
+    const lThigh = make(new THREE.CylinderGeometry(0.1, 0.085, 0.44, 8), mat, -0.12, -0.78, 0.04, -0.7, 0, -0.08);
+    const rThigh = make(new THREE.CylinderGeometry(0.1, 0.085, 0.44, 8), mat, 0.12, -0.72, -0.06, 0.9, 0, 0.08);
+    const lShin  = make(new THREE.CylinderGeometry(0.08, 0.06, 0.4, 8), mat, -0.2, -1.16, 0.28, 0.5, 0, -0.06);
+    const rShin  = make(new THREE.CylinderGeometry(0.08, 0.06, 0.4, 8), mat, 0.18, -1.08, -0.32, -1.1, 0, 0.06);
+    const lFoot  = make(new THREE.BoxGeometry(0.12, 0.07, 0.2), mat, -0.22, -1.4, 0.38);
+    const rFoot  = make(new THREE.BoxGeometry(0.12, 0.07, 0.2), mat, 0.2, -1.3, -0.46);
+    group.add(lThigh, rThigh, lShin, rShin, lFoot, rFoot);
+
+    group.rotation.x = 0.12;
+    group.position.set(0, 0.22, 0);
+  }
+
+  scene.add(group);
+  return group;
+}
+
+// Touch/drag rotation
+function addDragRotation(canvas, object) {
+  let dragging = false, lastX = 0;
+  canvas.addEventListener('touchstart', e => { dragging = true; lastX = e.touches[0].clientX; }, { passive:true });
+  canvas.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const dx = e.touches[0].clientX - lastX;
+    object.rotation.y += dx * 0.018;
+    lastX = e.touches[0].clientX;
+  }, { passive:true });
+  canvas.addEventListener('touchend', () => dragging = false);
+  canvas.addEventListener('mousedown', e => { dragging = true; lastX = e.clientX; });
+  canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    object.rotation.y += (e.clientX - lastX) * 0.012;
+    lastX = e.clientX;
+  });
+  canvas.addEventListener('mouseup', () => dragging = false);
+}
+
+// Init 3 scenes
+const s1 = createScene('canvas1');
+const fig1 = buildFigure(s1.scene, s1.mat, s1.accentMat, 'rest');
+addDragRotation(s1.canvas, fig1);
+
+const s2 = createScene('canvas2');
+const fig2 = buildFigure(s2.scene, s2.mat, s2.accentMat, 'athletic');
+addDragRotation(s2.canvas, fig2);
+
+const s3 = createScene('canvas3');
+const fig3 = buildFigure(s3.scene, s3.mat, s3.accentMat, 'run');
+addDragRotation(s3.canvas, fig3);
+
+let autoRotateDrag = { c1:false, c2:false, c3:false };
+
+function animate() {
+  requestAnimationFrame(animate);
+  fig1.rotation.y += 0.006;
+  fig2.rotation.y += 0.007;
+  fig3.rotation.y += 0.008;
+  s1.renderer.render(s1.scene, s1.camera);
+  s2.renderer.render(s2.scene, s2.camera);
+  s3.renderer.render(s3.scene, s3.camera);
+}
+animate();
+
+// Resize canvases on load
+window.addEventListener('load', () => {
+  [s1, s2, s3].forEach(s => {
+    const w = s.canvas.offsetWidth;
+    const h = s.canvas.offsetHeight;
+    s.renderer.setSize(w, h);
+    s.camera.aspect = w / h;
+    s.camera.updateProjectionMatrix();
+  });
+});
+</script>
+</body>
+</html>
